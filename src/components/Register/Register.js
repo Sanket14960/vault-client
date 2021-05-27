@@ -1,45 +1,61 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useState } from 'react';
 
 const Register = () => {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState(null)
+  const [loading, isLoading] = useState(false)
 
-  const submitHandler = (event) => {
+  const submitHandler = async event => {
+    isLoading(true)
     event.preventDefault();
-    console.log({username,password})
+    console.log({email,password})
 
     var config = {
       method: 'post',
-      url: 'http://localhost:3001/register/',
-      headers: { 
+      url: 'http://localhost:3001/sign-up/',
+      headers: {
         'Content-Type': 'application/json'
       },
-      data : {"username": username ,"password": password }
+      data : {"email": email ,"password": password }
     };
 
-    axios(config)
-    .then(function (response) {
+    try {
+      const response = await axios(config)
       console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
+    }
+    catch (err) {
+      setErrors(err.response.data.error)
+      console.log(errors)
+    }
+    finally {
+      isLoading(false)
+    }
+  };
 
   return (
-    <form onSubmit={submitHandler}>
+    <form class="form-inline" onSubmit={submitHandler}>
       <h1> Register </h1>
-      <div className="login-form">
-        <label>Enter Username: </label>
-        <input type="text" placeholder="Enter username" value={username} onChange={(event) => setUsername(event.target.value)} />
+
+      <div className="form-group">
+        <label> Email: </label>
+        <input type="text" className="form-control" placeholder="Enter Email" value={email} onChange={(event) => setEmail(event.target.value)} />
       </div>
-      <div className="login-form">
-        <label>Enter Password: </label>
-        <input type="text" placeholer="Enter password" value={password} onChange={(event) => setPassword(event.target.value)} />
-      </div>    
-        <button className="button" type="submit">Click to Register</button>  
+      <div className="form-group">
+        <label> Password: </label>
+        <input type="text" className="form-control" placeholder="Enter Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+      </div>
+      {errors && <span className="danger hero">
+        {errors}
+      </span>}
+
+      <button className="btn btn-primary" type="submit">
+      <span>Click to Register</span>
+      {loading && <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>}
+      </button>
     </form>
   )
 }

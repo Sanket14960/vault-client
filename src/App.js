@@ -1,21 +1,18 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import axios from 'axios';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import './App.css';
-
-import Register from './components/Register/Register';
+import Landing from './components/Landing/Landing';
 import Login from './components/Login/Login';
-import Passwords from './components/Passwords/Passwords';
+import Register from './components/Register/Register';
 
 const App = () => {
-  
 
   return (
     <Router>
+      <Redirect from="/" to="/landing" />
+      <Route path="/landing" component={ Landing } />
       <Route path="/register" component={ Register } />
       <Route path="/login" component={ Login } />
-      <Route path="/passwords" component={ Passwords } />
     </Router>
   );
 }
